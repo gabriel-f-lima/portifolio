@@ -25,7 +25,7 @@
 
   /* neutros */
   --paper: #F3EEE6; --paper-2: #EAE3D7; --card: #FFFDF9; --ink: #14110F; --muted: #615A51; --line: rgba(20, 17, 15, .12);
-  --chrome-bg: rgba(250, 247, 242, .8); --chrome-ink: #14110F; --chrome-track: rgba(20, 17, 15, .14);
+  --chrome-bg: rgba(250, 247, 242, .94); --chrome-ink: #14110F; --chrome-track: rgba(20, 17, 15, .14);
   --chrome-fill: #0F7444; --chrome-line: rgba(20, 17, 15, .08);
   --accent: #0F7444; --accent-ink: #FFFFFF; --focus: #2F6BFF;
 
@@ -77,7 +77,7 @@
   :root:not([data-theme="light"]) {
     color-scheme: dark;
     --paper: #0B0F0D; --paper-2: #101614; --card: #151B18; --ink: #F1EDE6; --muted: #A6B0AA; --line: rgba(241, 237, 230, .12);
-    --chrome-bg: rgba(12, 16, 14, .74); --chrome-ink: #F1EDE6; --chrome-track: rgba(241, 237, 230, .18);
+    --chrome-bg: rgba(12, 16, 14, .92); --chrome-ink: #F1EDE6; --chrome-track: rgba(241, 237, 230, .18);
     --chrome-fill: #5BE39A; --chrome-line: rgba(241, 237, 230, .1);
     --accent: #5BE39A; --accent-ink: #07120C; --focus: #8FB0FF;
     --hero-bg: #07120C; --hero-muted: #9FB2A7;
@@ -99,7 +99,7 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
   --paper: #0B0F0D; --paper-2: #101614; --card: #151B18; --ink: #F1EDE6; --muted: #A6B0AA; --line: rgba(241, 237, 230, .12);
-  --chrome-bg: rgba(12, 16, 14, .74); --chrome-ink: #F1EDE6; --chrome-track: rgba(241, 237, 230, .18);
+  --chrome-bg: rgba(12, 16, 14, .92); --chrome-ink: #F1EDE6; --chrome-track: rgba(241, 237, 230, .18);
   --chrome-fill: #5BE39A; --chrome-line: rgba(241, 237, 230, .1);
   --accent: #5BE39A; --accent-ink: #07120C; --focus: #8FB0FF;
   --hero-bg: #07120C; --hero-muted: #9FB2A7;
@@ -207,7 +207,6 @@ section, [id] { scroll-margin-top: 76px; }
 .chrome-bar {
   pointer-events: auto; max-width: 760px; margin-inline: auto; display: flex; align-items: center; gap: 12px;
   padding: 5px 5px 5px 16px; border-radius: 999px; background: var(--chrome-bg); color: var(--chrome-ink);
-  -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3);
   box-shadow: 0 0 0 1px var(--chrome-line), 0 10px 30px rgba(0, 0, 0, .1);
 }
 .mono { font-family: var(--font-display); font-weight: 800; font-size: 17px; letter-spacing: -.02em; text-decoration: none; }
@@ -228,19 +227,11 @@ section, [id] { scroll-margin-top: 76px; }
 .theme-btn[data-mode="dark"] .i-moon { display: none; }
 
 /* ---------- Efeitos de fundo ---------- */
-.blobs { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-.blobs > span {
-  position: absolute; width: max(90vmax, 700px); aspect-ratio: 1; border-radius: 50%;
-  background: radial-gradient(circle at center, var(--b1) 0%, transparent 64%);
-  animation: drift1 10s ease-in-out infinite alternate;
-}
-.blobs > span:nth-child(1) { left: -38%; top: -48%; }
-.blobs > span:nth-child(2) { right: -46%; top: 6%; background: radial-gradient(circle at center, var(--b2) 0%, transparent 64%); animation-name: drift2; animation-duration: 12s; }
-.blobs > span:nth-child(3) { left: -10%; bottom: -60%; background: radial-gradient(circle at center, var(--b3) 0%, transparent 64%); animation-name: drift3; animation-duration: 14s; }
-@keyframes drift1 { from { transform: translate3d(0, 0, 0) scale(1); } to { transform: translate3d(20vw, 12vh, 0) scale(1.2); } }
-@keyframes drift2 { from { transform: translate3d(0, 0, 0) scale(1.08); } to { transform: translate3d(-24vw, -8vh, 0) scale(.86); } }
-@keyframes drift3 { from { transform: translate3d(0, 0, 0) scale(.92); } to { transform: translate3d(16vw, -14vh, 0) scale(1.16); } }
-.is-off, .is-off * { animation-play-state: paused !important; }
+/* manchas de cor: desenhadas num canvas bem pequeno (1/8 do tamanho) que o navegador amplia. Como são gradientes
+   suaves, a ampliação não aparece, e a placa de vídeo guarda uma imagem minúscula em vez de camadas do tamanho da tela */
+.blobs { position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+/* fora da tela, os efeitos contínuos param de vez (e não só pausam), para o navegador liberar a memória de vídeo deles */
+.is-off, .is-off *, .is-off *::before, .is-off *::after { animation: none !important; }
 
 /* ---------- Início ---------- */
 .hero {
@@ -324,9 +315,6 @@ section, [id] { scroll-margin-top: 76px; }
 .scenes[data-scene="tech"] { --s-bg: var(--tech-bg); --s-ink: var(--tech-ink); --s-b1: var(--tech-b1); --s-b2: var(--tech-b2); --s-b3: var(--tech-b3); }
 .scenes-bg { position: sticky; top: 0; height: 100svh; margin-bottom: -100svh; z-index: -1; }
 .scenes::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 40svh; z-index: -1; pointer-events: none; background: linear-gradient(180deg, transparent, var(--s-bg)); }
-.scenes-bg .blobs > span:nth-child(1) { background: radial-gradient(circle at center, var(--s-b1) 0%, transparent 64%); }
-.scenes-bg .blobs > span:nth-child(2) { background: radial-gradient(circle at center, var(--s-b2) 0%, transparent 64%); }
-.scenes-bg .blobs > span:nth-child(3) { background: radial-gradient(circle at center, var(--s-b3) 0%, transparent 64%); }
 
 .traction { padding-block: clamp(72px, 11vw, 140px) clamp(40px, 6vw, 72px); display: grid; gap: 14px; }
 .big {
@@ -363,10 +351,12 @@ section, [id] { scroll-margin-top: 76px; }
 .phone-inline { width: min(260px, 68vw); margin: 18px auto 0; transform: rotate(-3deg); }
 .step:nth-child(odd) .phone-inline { transform: rotate(3deg); }
 .phone-col { display: none; }
+/* telas escondidas ficam recolhidas embaixo (rolando para baixo) ou em cima (rolando para cima); a atual e a anterior
+   sempre aparecem, por isso as duas regras de baixo têm a mesma força da regra de direção e vêm depois dela */
 .screen .shot { clip-path: inset(100% 0 0 0); transform: scale(1.08); transition: none; z-index: 0; }
 .scenes[data-dir="up"] .screen .shot { clip-path: inset(0 0 100% 0); }
-.screen .shot.was-on { clip-path: inset(0 0 0 0); transform: none; z-index: 1; }
-.screen .shot.is-on {
+.scenes .screen .shot.was-on { clip-path: inset(0 0 0 0); transform: none; z-index: 1; }
+.scenes .screen .shot.is-on {
   clip-path: inset(0 0 0 0); transform: none; z-index: 2;
   transition: clip-path .8s cubic-bezier(.7, 0, .2, 1), transform 1.1s var(--ease);
 }
@@ -444,12 +434,13 @@ section, [id] { scroll-margin-top: 76px; }
 /* cancela: carro chega, sensor vê, braço sobe, luz acende */
 .cancela .arm { transform-box: view-box; transform-origin: 52px 79px; animation: arm 6.5s var(--ease) infinite; }
 .cancela .car { animation: car 6.5s cubic-bezier(.45, 0, .25, 1) infinite; transform: translateX(60px); }
-.cancela .led { fill: color-mix(in srgb, currentColor 30%, transparent); animation: led 6.5s steps(1) infinite; }
+.cancela .led-off { fill: currentColor; opacity: .3; }
+.cancela .led { fill: var(--c-green); opacity: 0; animation: led 6.5s steps(1) infinite; }
 .cancela .wave { opacity: 0; animation: wave 6.5s ease-out infinite; }
 .cancela .wave:nth-of-type(2) { animation-delay: .15s; }
 @keyframes car { 0% { transform: translateX(270px); } 30%, 50% { transform: translateX(60px); } 76%, 100% { transform: translateX(-280px); } }
 @keyframes arm { 0%, 34% { transform: rotate(0deg); } 46%, 72% { transform: rotate(-78deg); } 86%, 100% { transform: rotate(0deg); } }
-@keyframes led { 0% { fill: color-mix(in srgb, currentColor 30%, transparent); } 34% { fill: var(--c-green); } 84% { fill: color-mix(in srgb, currentColor 30%, transparent); } }
+@keyframes led { 0% { opacity: 0; } 34% { opacity: 1; } 84% { opacity: 0; } }
 @keyframes wave { 0%, 26% { opacity: 0; } 32% { opacity: .9; } 42%, 100% { opacity: 0; } }
 /* API: o app pede, a API responde */
 .api .req { animation: req 4.2s var(--ease) infinite; }
@@ -556,7 +547,7 @@ a.c-value:hover { color: var(--mint); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
   .cancela .arm { transform: rotate(-78deg); }
-  .cancela .led { fill: var(--c-green); }
+  .cancela .led { opacity: 1; }
   .api .req { opacity: 1; transform: translateX(30px); }
 }
 .preintro .hero-inner, .preintro .shapes { opacity: 0; }
@@ -597,7 +588,7 @@ a.c-value:hover { color: var(--mint); }
 <main>
   <div id="inicio" data-seg>
     <section class="hero live" aria-labelledby="hero-name">
-      <div class="blobs" aria-hidden="true"><span></span><span></span><span></span></div>
+      <canvas class="blobs" aria-hidden="true"></canvas>
       <div class="shapes" aria-hidden="true">
         <span class="shape dot" style="--x: 8%; --y: 15%; --s: 26px; --c: var(--c-orange)"><i></i></span>
         <span class="shape ring" style="--x: 82%; --y: 14%; --s: 50px; --c: var(--c-purple); --d: -1.2s"><i></i></span>
@@ -631,7 +622,7 @@ a.c-value:hover { color: var(--mint); }
     <div class="reveal">
       <div class="reveal-sticky">
         <div class="reveal-disc live">
-          <div class="blobs" aria-hidden="true"><span></span><span></span><span></span></div>
+          <canvas class="blobs" aria-hidden="true"></canvas>
           <div class="wrap reveal-content">
             <p class="eyebrow" data-reveal>Meu melhor projeto</p>
             <div class="logo" data-reveal-logo>
@@ -647,7 +638,7 @@ a.c-value:hover { color: var(--mint); }
     </div>
 
     <div class="scenes live" data-scene="nexo">
-      <div class="scenes-bg" aria-hidden="true"><div class="blobs"><span></span><span></span><span></span></div></div>
+      <div class="scenes-bg" aria-hidden="true"><canvas class="blobs" data-colors="--s-b1,--s-b2,--s-b3"></canvas></div>
 
       <div class="wrap traction" data-step data-scene="nexo">
         <p class="eyebrow">Em números</p>
@@ -786,6 +777,7 @@ a.c-value:hover { color: var(--mint); }
               </g>
               <rect x="40" y="70" width="18" height="58" rx="4" fill="currentColor"/>
               <rect x="56" y="100" width="8" height="12" rx="2" fill="currentColor"/>
+              <circle class="led-off" cx="49" cy="61" r="6"/>
               <circle class="led" cx="49" cy="61" r="6"/>
             </svg>
           </div>
@@ -818,7 +810,7 @@ a.c-value:hover { color: var(--mint); }
   </section>
 
   <section class="skills live" id="habilidades" data-seg aria-labelledby="skills-titulo">
-    <div class="blobs" aria-hidden="true"><span></span><span></span><span></span></div>
+    <canvas class="blobs" aria-hidden="true"></canvas>
     <div class="outline-rows" aria-hidden="true">
       <div class="outline-row r1">Java · JavaScript · TypeScript · Python · C · C++ · Java · JavaScript</div>
       <div class="outline-row r2">React · Node.js · Flask · PostgreSQL · Supabase · Git · React · Node.js</div>
@@ -875,7 +867,7 @@ a.c-value:hover { color: var(--mint); }
 
   <div class="contact-shell">
     <section class="contact live" id="contato" data-seg aria-labelledby="contato-titulo">
-      <div class="blobs" aria-hidden="true"><span></span><span></span><span></span></div>
+      <canvas class="blobs" aria-hidden="true"></canvas>
       <div class="wrap">
         <p class="eyebrow">Contato</p>
         <h2 class="contact-title" id="contato-titulo" data-words>Vamos conversar?</h2>
@@ -1013,6 +1005,67 @@ a.c-value:hover { color: var(--mint); }
       } catch (e) { fallback(); }
     });
   });
+
+  /* ---------- Manchas de cor no fundo ----------
+     Cada seção tem um canvas com 1/8 do tamanho dela; o navegador amplia e o gradiente continua suave. As cores vêm
+     das variáveis CSS da seção (no Nexo, das que mudam de cor com a rolagem). Só desenha o que está na tela, a 30 quadros
+     por segundo; para quem prefere menos movimento, as manchas ficam paradas. */
+  var BLOB_PATHS = [
+    { x: [0.08, 0.34], y: [0.02, 0.2], s: [1, 1.2], d: 10 },
+    { x: [0.96, 0.7], y: [0.5, 0.38], s: [1.08, 0.86], d: 12 },
+    { x: [0.32, 0.5], y: [1.02, 0.84], s: [0.92, 1.16], d: 14 }
+  ];
+  function parseRgba(str) {
+    var m = /rgba?\(([^)]+)\)/.exec(str || '');
+    if (!m) return null;
+    var p = m[1].split(/[\s,\/]+/).filter(Boolean).map(parseFloat);
+    return [Math.round(p[0]), Math.round(p[1]), Math.round(p[2]), p.length > 3 ? p[3] : 1];
+  }
+  var blobs = $$('canvas.blobs').map(function (cv) {
+    return { cv: cv, ctx: cv.getContext('2d'), names: (cv.getAttribute('data-colors') || '--b1,--b2,--b3').split(','), visible: true };
+  });
+  function sizeBlobs() {
+    blobs.forEach(function (b) {
+      var w = Math.max(24, Math.round(b.cv.clientWidth / 8)), h = Math.max(24, Math.round(b.cv.clientHeight / 8));
+      if (b.cv.width !== w || b.cv.height !== h) { b.cv.width = w; b.cv.height = h; }
+    });
+  }
+  function drawBlobs(b, now) {
+    var ctx = b.ctx, w = b.cv.width, h = b.cv.height, cs = getComputedStyle(b.cv);
+    var base = 0.55 * Math.max(w, Math.min(h, w * 2.2));
+    ctx.clearRect(0, 0, w, h);
+    BLOB_PATHS.forEach(function (p, i) {
+      var c = parseRgba(cs.getPropertyValue(b.names[i]));
+      if (!c || c[3] <= 0) return;
+      var t = reduce ? 0 : 0.5 - 0.5 * Math.cos(now / 1000 / p.d * Math.PI);
+      var cx = (p.x[0] + (p.x[1] - p.x[0]) * t) * w, cy = (p.y[0] + (p.y[1] - p.y[0]) * t) * h;
+      var r = base * (p.s[0] + (p.s[1] - p.s[0]) * t);
+      var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r), rgb = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',';
+      g.addColorStop(0, rgb + c[3] + ')');
+      g.addColorStop(0.64, rgb + '0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, w, h);
+    });
+  }
+  if (blobs.length) {
+    sizeBlobs();
+    if ('ResizeObserver' in window) new ResizeObserver(sizeBlobs).observe(document.documentElement);
+    else window.addEventListener('resize', sizeBlobs);
+    if ('IntersectionObserver' in window) {
+      var blobIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { blobs.forEach(function (b) { if (b.cv === e.target) b.visible = e.isIntersecting; }); });
+      });
+      blobs.forEach(function (b) { blobIO.observe(b.cv); });
+    }
+    var lastBlobDraw = -1e9;
+    (function blobLoop(now) {
+      if (now - lastBlobDraw >= (reduce ? 400 : 33)) {
+        lastBlobDraw = now;
+        blobs.forEach(function (b) { if (b.visible) drawBlobs(b, now); });
+      }
+      requestAnimationFrame(blobLoop);
+    })(performance.now());
+  }
 
   if (!motion) { root.classList.remove('preintro'); return; }
 
